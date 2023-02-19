@@ -13,6 +13,7 @@ class Pedone {
 
   MostraMossePossibili(PlayGround) {
     //TODO
+    console.log("ciao bro")
     if (!this.PrimaMossaFatta) {
     } else {
     }
