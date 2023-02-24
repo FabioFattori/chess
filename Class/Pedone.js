@@ -1,4 +1,4 @@
-
+import { setAllCaselle } from "../functions/SetAllCaselleNonEvidenziate";
 
 class Pedone {
   constructor(x, y, colore) {
@@ -9,13 +9,27 @@ class Pedone {
     this.PrimaMossaFatta = false;
   }
 
-  
+
 
   MostraMossePossibili(PlayGround) {
     //TODO
-    console.log("ciao bro")
-    if (!this.PrimaMossaFatta) {
+
+    setAllCaselle(PlayGround);
+
+    if (this.colore === "bianco") {
+      if (!this.PrimaMossaFatta) {
+        PlayGround[this.x][this.y + 2].Evidenziata = true
+      }
+
+      PlayGround[this.x][this.y + 1].Evidenziata = true
+
     } else {
+      if (!this.PrimaMossaFatta) {
+        PlayGround[this.x][this.y - 2].Evidenziata = true
+      }
+
+      PlayGround[this.x][this.y - 1].Evidenziata = true
+
     }
   }
 }

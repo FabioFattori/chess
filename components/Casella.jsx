@@ -18,9 +18,11 @@ import reN from "../assets/ReN.jpg";
 import reB from "../assets/ReB.jpg";
 import reginaN from "../assets/ReginaN.jpg";
 import reginaB from "../assets/ReginaB.jpg";
+import { setAllCaselle } from "../functions/SetAllCaselleNonEvidenziate";
 
-function Casella({ CasellaObj, colore }) {
+function Casella({ CasellaObj, colore, matrix, setter, PezzoSelezionato,setPezzo }) {
   const [content, setContent] = useState(null);
+  const [stile, setStile] = useState();
 
   useEffect(() => {
     if (CasellaObj.occupata instanceof Pedone) {
@@ -60,31 +62,59 @@ function Casella({ CasellaObj, colore }) {
         setContent(reN);
       }
     }
+
+
+    setStile(ChooseStyle())
   }, []);
 
-  return content ? (
-    colore ? (
-      <TouchableOpacity style={styles.Casella_Bianca}>
-        <Image style={styles.Image} source={content} />
-      </TouchableOpacity>
-    ) : (
-      <TouchableOpacity style={styles.Casella_Nera}>
-        <Image style={styles.Image} source={content} />
-      </TouchableOpacity>
-    )
-  ) : (
+  function Evidenzia() {
 
-    colore ? (
-      <TouchableOpacity style={styles.Casella_Bianca}>
-        <Image style={styles.Image} source={content} />
-      </TouchableOpacity>
-    ) : (
-      <TouchableOpacity style={styles.Casella_Nera}>
-        <Image style={styles.Image} source={content} />
-      </TouchableOpacity>
-    )
-    
-  );
+    CasellaObj.occupata.MostraMossePossibili(matrix);
+    setPezzo(CasellaObj.occupata)
+    setter(matrix)
+  }
+
+
+
+  function ChooseStyle() {
+    if (CasellaObj.Evidenziata && colore) {
+      return styles.Casella_Bianca_Evidenziata;
+    } else if (colore) {
+      return styles.Casella_Bianca;
+    } else if (CasellaObj.Evidenziata && !colore) {
+      return styles.Casella_Nera_Evidenziata
+    } else {
+      return styles.Casella_Nera;
+    }
+  }
+
+  function Muovi() {
+    if (CasellaObj.Evidenziata) {
+      setAllCaselle(matrix);
+      
+      matrix[PezzoSelezionato.x][PezzoSelezionato.y].occupata=false;  
+      matrix[CasellaObj.x][CasellaObj.y].occupata=PezzoSelezionato;
+      
+      matrix[CasellaObj.x][CasellaObj.y].occupata.x=CasellaObj.x;
+      
+      matrix[CasellaObj.x][CasellaObj.y].occupata.y=CasellaObj.y;
+
+      if(PezzoSelezionato instanceof Pedone){
+        matrix[CasellaObj.x][CasellaObj.y].occupata.PrimaMossaFatta=true;
+      }
+      
+      setter(matrix);
+    }
+  }
+
+  return content ? (
+    <TouchableOpacity onPress={() => Evidenzia()} style={stile}>
+      <Image style={styles.Image} source={content} />
+    </TouchableOpacity>
+  ) : (
+    <TouchableOpacity onPress={() => Muovi()} style={stile}>
+    </TouchableOpacity>
+  )
 }
 
 const styles = StyleSheet.create({
@@ -99,7 +129,21 @@ const styles = StyleSheet.create({
     backgroundColor: "#470A00",
   },
 
- 
+  Casella_Nera_Evidenziata: {
+    width: 50,
+    height: 50,
+    borderColor: "green",
+    borderWidth: 2,
+    backgroundColor: "#470A00",
+  },
+
+  Casella_Bianca_Evidenziata: {
+    width: 50,
+    height: 50,
+    borderColor: "green",
+    borderWidth: 2,
+    backgroundColor: "#ffff0",
+  },
 
 
 
